@@ -24,7 +24,7 @@ defmodule HTTPEventClient do
     if event_name_valid?(event) do
       method = resolve_method_type(method)
 
-      Process.send(__MODULE__, :send_event, [event, event_server_url(), method, data])
+      Process.send(self(), :send_event, [event, event_server_url(), method, data])
       :ok
     else
       {:error, "Event \"#{event}\" is not a valid event name"}
