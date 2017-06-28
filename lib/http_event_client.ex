@@ -10,23 +10,19 @@ defmodule HTTPEventClient do
   HTTPEventClient.emit("something happend")
 
   ### Event with data
-  HTTPEventClient.emit("something happend", %{data: %{username: "john doe"}})
+  HTTPEventClient.emit("something happend", %{username: "john doe"})
 
   ### Async event
-  HTTPEventClient.emit("something happend", %{async: true})
+  HTTPEventClient.emit_async("something happend")
   """
-  @doc """
-  Sends a simple event
-  """
-  def emit(event), do: emit(event, %{})
 
   @doc """
   Sends events async.
   """
-  def emit(event, %{async: true} = args) do
+  def emit_async(event), do: emit_async(event, "", nil)
+  def emit_async(event, data, method \\ nil) do
     if event_name_valid?(event) do
-      data = Map.get(args, :data) || ""
-      method = resolve_method_type(Map.get(args, :method))
+      method = resolve_method_type(method)
 
       Process.send(__MODULE__, :send_event, [event, event_server_url(), method, data])
       :ok
@@ -38,10 +34,10 @@ defmodule HTTPEventClient do
   @doc """
   Sends events and awaits a response.
   """
-  def emit(event, args) do
+  def emit(event), do: emit(event, "", nil)
+  def emit(event, data, method \\ nil) do
     if event_name_valid?(event) do
-      data = Map.get(args, :data) || ""
-      method = resolve_method_type(Map.get(args, :method))
+      method = resolve_method_type(method)
 
       send_event(event, event_server_url(), method, data)
     else
@@ -97,7 +93,7 @@ defmodule HTTPEventClient do
   end
 
   defp event_name_valid?(event) do
-    if String.match?(event, ~r/[^a-zA-Z0-9 ]/) do
+    if String.match?(event, ~r/[^a-zA-Z0-9-_]/) do
       false
     else
       true
