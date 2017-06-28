@@ -46,7 +46,6 @@ defmodule HTTPEventClient do
   defp send_event(_, false, _, _), do: {:error, "Event server URL not defined"}
 
   defp send_event(event, server_url, "POST", data) do
-    IO.puts "SENDING TO: #{Path.join(server_url, event)}"
     HTTPoison.post! "#{Path.join(server_url, event)}", Poison.encode!(data), headers()
   end
 
