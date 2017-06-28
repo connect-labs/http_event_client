@@ -19,7 +19,7 @@ defmodule HTTPEventClient do
   @doc """
   Sends events async.
   """
-  def emit_async(event), do: emit_async(event, "", nil)
+  def emit_async(event), do: emit_async(event, nil, nil)
   def emit_async(event, data, method \\ nil) do
     if event_name_valid?(event) do
       method = resolve_method_type(method)
@@ -34,7 +34,7 @@ defmodule HTTPEventClient do
   @doc """
   Sends events and awaits a response.
   """
-  def emit(event), do: emit(event, "", nil)
+  def emit(event), do: emit(event, nil, nil)
   def emit(event, data, method \\ nil) do
     if event_name_valid?(event) do
       method = resolve_method_type(method)
