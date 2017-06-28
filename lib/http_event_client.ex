@@ -22,9 +22,7 @@ defmodule HTTPEventClient do
   def emit_async(event), do: emit_async(event, nil, nil)
   def emit_async(event, data, method \\ nil) do
     if event_name_valid?(event) do
-      method = resolve_method_type(method)
-
-      Process.send(self(), :send_event, [event, event_server_url(), method, data])
+      Process.send(__MODULE__, :emit, [event, data, method])
       :ok
     else
       {:error, "Event \"#{event}\" is not a valid event name"}
