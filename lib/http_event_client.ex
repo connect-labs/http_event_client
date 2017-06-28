@@ -102,9 +102,11 @@ defmodule HTTPEventClient do
 
   defp resolve_method_type(method) do
     method = method || default_event_http_method()
-    unless String.valid?(method) do
-      method = Atom.to_string(method)
-    end
+    method = if String.valid?(method) do
+               method
+             else
+               Atom.to_string(method)
+             end
 
     method = String.upcase(method)
   end
