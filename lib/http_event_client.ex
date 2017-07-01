@@ -40,7 +40,7 @@ defmodule HTTPEventClient do
       case send_event(event, event_server_url(), method, data) do
         {:ok, %HTTPoison.Response{body: result}} ->
           IO.puts "[HTTP EVENT CLIENT] Recv - #{inspect result}"
-          Poison.decode!(result)
+          decode_response(result)
         error -> {:error, error}
       end
     else
@@ -115,5 +115,13 @@ defmodule HTTPEventClient do
 
   defp headers do
     [{"Authorization", "Bearer #{Application.get_env(:http_event_client, :api_token)}"}, {"Content-Type", "application/json"}]
+  end
+
+  defp decode_response(result) when is_map(result) do
+    Poison.decode!(result)
+  end
+
+  defp decode_response(result) do
+    result
   end
 end
