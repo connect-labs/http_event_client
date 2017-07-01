@@ -32,12 +32,15 @@ defmodule HTTPEventClient do
   @doc """
   Sends events and awaits a response.
   """
-  def emit(event), do: emit(event, nil, nil)
-  def emit(event, data, method \\ nil) do
+  def emit(event), do: emit(event, nil, :get)
+  def emit(event, data, method \\ :get) do
     if event_name_valid?(event) do
       method = resolve_method_type(method)
 
-      send_event(event, event_server_url(), method, data)
+      case send_event(event, event_server_url(), method, data) do
+        {:ok, %HTTPoison.Response{body: result}} -> Poison.decode!(result)
+        error -> {:error, error}
+      end
     else
       {:error, "Event \"#{event}\" is not a valid event name"}
     end
@@ -46,15 +49,15 @@ defmodule HTTPEventClient do
   defp send_event(_, false, _, _), do: {:error, "Event server URL not defined"}
 
   defp send_event(event, server_url, "POST", data) do
-    HTTPoison.post! "#{Path.join(server_url, event)}", Poison.encode!(data), headers()
+    HTTPoison.post "#{Path.join(server_url, event)}", Poison.encode!(data), headers()
   end
 
   defp send_event(event, server_url, "PUT", data) do
-    HTTPoison.put! "#{Path.join(server_url, event)}", Poison.encode!(data), headers()
+    HTTPoison.put "#{Path.join(server_url, event)}", Poison.encode!(data), headers()
   end
 
   defp send_event(event, server_url, "PATCH", data) do
-    HTTPoison.patch! "#{Path.join(server_url, event)}", Poison.encode!(data), headers()
+    HTTPoison.patch "#{Path.join(server_url, event)}", Poison.encode!(data), headers()
   end
 
   defp send_event(event, server_url, "GET", data) do
@@ -62,7 +65,7 @@ defmodule HTTPEventClient do
   end
 
   defp send_event(event, server_url, "DELETE", data) do
-    HTTPoison.delete! "#{Path.join(server_url, event)}", Poison.encode!(data), headers()
+    HTTPoison.delete "#{Path.join(server_url, event)}", Poison.encode!(data), headers()
   end
 
   defp event_server_url do
