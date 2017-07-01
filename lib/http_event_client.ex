@@ -32,8 +32,8 @@ defmodule HTTPEventClient do
   @doc """
   Sends events and awaits a response.
   """
-  def emit(event), do: emit(event, nil, :get)
-  def emit(event, data, method \\ :get) do
+  def emit(event), do: emit(event, nil, nil)
+  def emit(event, data, method \\ nil) do
     if event_name_valid?(event) do
       method = resolve_method_type(method)
 
