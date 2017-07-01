@@ -36,10 +36,10 @@ defmodule HTTPEventClient do
   def emit(event, data, method \\ nil) do
     if event_name_valid?(event) do
       method = resolve_method_type(method)
-
+      IO.puts "[HTTP EVENT CLIENT] Send - #{inspect data}"
       case send_event(event, event_server_url(), method, data) do
         {:ok, %HTTPoison.Response{body: result}} ->
-          IO.puts "[HTTP EVENT CLIENT] #{inspect result}"
+          IO.puts "[HTTP EVENT CLIENT] Recv - #{inspect result}"
           Poison.decode!(result)
         error -> {:error, error}
       end
