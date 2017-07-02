@@ -117,11 +117,11 @@ defmodule HTTPEventClient do
     [{"Authorization", "Bearer #{Application.get_env(:http_event_client, :api_token)}"}, {"Content-Type", "application/json"}]
   end
 
-  defp decode_response(result) when is_map(result) do
-    Poison.decode!(result)
-  end
-
   defp decode_response(result) do
-    result
+    case Poison.decode(result) do
+      {:ok, data} -> data
+      {:error, _} -> result
+    end
+
   end
 end
