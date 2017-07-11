@@ -171,7 +171,7 @@ defmodule HTTPEventClient do
   defp decode_response(result) do
     case Poison.decode(result) do
       {:ok, data} -> data
-      {:error, _} -> result
+      _error -> result
     end
 
   end
