@@ -30,6 +30,8 @@ defmodule HTTPEventClient do
   ```
   """
 
+  require Logger
+
   defstruct [
     event_server_url: Application.get_env(:http_event_client, :event_server_url),
     api_token: Application.get_env(:http_event_client, :api_token),
@@ -40,40 +42,32 @@ defmodule HTTPEventClient do
   @doc """
   Sends events async.
   """
-  def emit_async(%__MODULE__{} = client, event), do: emit_async(client, event, nil, nil)
-  def emit_async(%__MODULE__{} = client, event, data), do: emit_async(client, event, data, nil)
-  def emit_async(%__MODULE__{} = client, event, data, method) do
+  def emit_async(%__MODULE__{} = client, event), do: emit_async(client, event, nil)
+  def emit_async(%__MODULE__{} = client, event, data) do
     if event_name_valid?(event) do
-      Process.spawn(__MODULE__, :emit, [client, event, data, method], [])
+      Process.spawn(__MODULE__, :emit, [client, event, data], [])
       :ok
     else
       {:error, "Event \"#{event}\" is not a valid event name"}
     end
   end
-  def emit_async(event), do: emit_async(event, nil, nil)
-  def emit_async(event, data), do: emit_async(event, data, nil)
-  def emit_async(event, data, method) do
+  def emit_async(event), do: emit_async(event, nil)
+  def emit_async(event, data) do
     client = %__MODULE__{}
-    if event_name_valid?(event) do
-      Process.spawn(__MODULE__, :emit, [client, event, data, method], [])
-      :ok
-    else
-      {:error, "Event \"#{event}\" is not a valid event name"}
-    end
+    emit(client, event, data)
   end
 
   @doc """
   Sends events and awaits a response.
   """
-  def emit(%__MODULE__{} = client, event), do: emit(client, event, nil, nil)
-  def emit(%__MODULE__{} = client, event, data), do: emit(client, event, data, nil)
-  def emit(%__MODULE__{} = client, event, data, method) do
+  def emit(%__MODULE__{} = client, event), do: emit(client, event, nil)
+  def emit(%__MODULE__{} = client, event, data) do
     if event_name_valid?(event) do
-      method = resolve_method_type(client, method)
-      IO.puts "[HTTP EVENT CLIENT] Send #{method}:#{event} >>> #{inspect data}"
+      method = http_method(client)
+      Logger.debug "#{event} >>> #{inspect data}", [event: event, method: method]
       case send_event(client, event, event_server_url(client), method, data) do
         {:ok, %HTTPoison.Response{body: result}} ->
-          IO.puts "[HTTP EVENT CLIENT] Recv #{method}:#{event} <<< #{inspect result}"
+          Logger.debug "#{event} <<< #{inspect result}", [event: event, method: method]
           decode_response(result)
         error -> {:error, error}
       end
@@ -81,25 +75,11 @@ defmodule HTTPEventClient do
       {:error, "Event \"#{event}\" is not a valid event name"}
     end
   end
-  def emit(event), do: emit(event, nil, nil)
-  def emit(event, data), do: emit(event, data, nil)
-  def emit(event, data, method) do
+  def emit(event), do: emit(event, nil)
+  def emit(event, data) do
     client = %__MODULE__{}
-    if event_name_valid?(event) do
-      method = resolve_method_type(client, method)
-      IO.puts "[HTTP EVENT CLIENT] Send #{method}:#{event} >>> #{inspect data}"
-      case send_event(client, event, event_server_url(client), method, data) do
-        {:ok, %HTTPoison.Response{body: result}} ->
-          IO.puts "[HTTP EVENT CLIENT] Recv #{method}:#{event} <<< #{inspect result}"
-          decode_response(result)
-        error -> {:error, error}
-      end
-    else
-      {:error, "Event \"#{event}\" is not a valid event name"}
-    end
+    emit(client, event, data)
   end
-
-  defp send_event(_, false, _, _), do: {:error, "Event server URL not defined"}
 
   defp send_event(client, event, server_url, "POST", data) do
     HTTPoison.post "#{Path.join(server_url, event)}", Poison.encode!(data), headers(client)
@@ -141,10 +121,6 @@ defmodule HTTPEventClient do
     end
   end
 
-  defp default_event_http_method(%__MODULE__{default_http_method: default_http_method}) do
-    default_http_method || :post
-  end
-
   defp event_name_valid?(event) do
     if String.match?(event, ~r/[^a-zA-Z0-9-_]/) do
       false
@@ -153,15 +129,15 @@ defmodule HTTPEventClient do
     end
   end
 
-  defp resolve_method_type(client, method) do
-    method = method || default_event_http_method(client)
+  defp http_method(%__MODULE__{default_http_method: default_http_method}) do
+    method = default_http_method || :post
     method = if String.valid?(method) do
                method
              else
                Atom.to_string(method)
              end
 
-    method = String.upcase(method)
+    String.upcase(method)
   end
 
   defp headers(%__MODULE__{api_token: api_token}) do
