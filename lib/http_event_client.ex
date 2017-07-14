@@ -66,9 +66,12 @@ defmodule HTTPEventClient do
       method = http_method(client)
       Logger.debug "#{event} >>> #{inspect data}", [event: event, method: method]
       case send_event(client, event, event_server_url(client), method, data) do
-        {:ok, %HTTPoison.Response{body: result}} ->
+        {:ok, %HTTPoison.Response{body: result, status_code: 200}} ->
           Logger.debug "#{event} <<< #{inspect result}", [event: event, method: method]
-          decode_response(result)
+          {:ok, decode_response(result)}
+        {:ok, %HTTPoison.Response{body: result, status_code: 400}} ->
+          Logger.debug "#{event} <<< #{inspect result}", [event: event, method: method]
+          {:error, decode_response(result)}
         error -> {:error, error}
       end
     else
