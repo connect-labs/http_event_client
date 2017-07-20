@@ -57,7 +57,9 @@ defmodule HTTPEventClient.Mixfile do
       files: ["lib", "mix.exs", "README*", "LICENSE*"],
       maintainers: ["Jake Humphrey"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/codelation/elixir-messenger"}
+      links: %{"GitHub" => "https://github.com/humphreyja/http_event_client"},
+      source_url: "https://github.com/humphreyja/http_event_client",
+      homepage_url: "https://github.com/humphreyja/http_event_client"
     ]
   end
 end
