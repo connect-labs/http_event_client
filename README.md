@@ -3,7 +3,7 @@
 [![Hex.pm version](https://img.shields.io/hexpm/v/http_event_client.svg)](https://hex.pm/packages/http_event_client)
 [![Hex.pm license](https://img.shields.io/hexpm/l/http_event_client.svg)](https://github.com/humphreyja/http_event_client/blob/master/LICENSE.txt)
 
-[Documentation](https://hexdocs.pm/http_event_server/api-reference.html)
+[Documentation](https://hexdocs.pm/http_event_client/api-reference.html)
 
 ## Installation
 
@@ -11,7 +11,7 @@ The package can be installed by adding `http_event_client` to your list of depen
 
 ```elixir
 def deps do
-  [{:http_event_client, "~> 0.2.2"}]
+  [{:http_event_client, "~> 0.2.3"}]
 end
 ```
 
