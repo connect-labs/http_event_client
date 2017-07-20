@@ -6,7 +6,7 @@ defmodule HTTPEventClient.Mixfile do
      name: "HTTP Event Client",
      description: description(),
      package: package(),
-     source_url: "https://github.com/humphreyja/http_event_client",
+     source_url: "https://github.com/connect-labs/http_event_client",
      version: "0.2.2",
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
@@ -57,9 +57,9 @@ defmodule HTTPEventClient.Mixfile do
       files: ["lib", "mix.exs", "README*", "LICENSE*"],
       maintainers: ["Jake Humphrey"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/humphreyja/http_event_client"},
-      source_url: "https://github.com/humphreyja/http_event_client",
-      homepage_url: "https://github.com/humphreyja/http_event_client"
+      links: %{"GitHub" => "https://github.com/connect-labs/http_event_client"},
+      source_url: "https://github.com/connect-labs/http_event_client",
+      homepage_url: "https://github.com/connect-labs/http_event_client"
     ]
   end
 end
