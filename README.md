@@ -1,6 +1,6 @@
 # EventClient
 
-![Hex.pm package](https://hex.pm/packages/http_event_client)
+![Hex.pm](https://hex.pm/packages/http_event_client)
 
 [Documentation](https://hexdocs.pm/http_event_server/api-reference.html)
 
