@@ -3,7 +3,6 @@
 [![Hex.pm](https://img.shields.io/hexpm/v/http_event_client.svg)]()
 [![Hex.pm](https://img.shields.io/hexpm/l/http_event_client.svg)]()
 [![Hex.pm](https://img.shields.io/hexpm/dt/http_event_client.svg)]()
-[![https://hexdocs.pm/http_event_client.html](https://img.shields.io/badge/Documentation--555555.svg)]()
 
 [Documentation](https://hexdocs.pm/http_event_server/api-reference.html)
 
