@@ -7,7 +7,7 @@ defmodule HTTPEventClient.Mixfile do
      description: description(),
      package: package(),
      source_url: "https://github.com/connect-labs/http_event_client",
-     version: "0.2.3",
+     version: "0.2.4",
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -37,7 +37,7 @@ defmodule HTTPEventClient.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:httpoison, "~> 0.11.1"},
+      {:httpoison, "~> 0.12.0"},
       {:poison, "~> 3.1"},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
